@@ -1,6 +1,6 @@
 <?php
 
-$curl = curl_init();
+
 require_once "config.php";
 
 $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -19,36 +19,47 @@ CREATE TABLE `posts` (
 
 
 */
-//Create account on RapidAPI and subscribe to reddit API to test the following script
-curl_setopt_array($curl, [
-    CURLOPT_URL => "https://reddit3.p.rapidapi.com/subreddit?url=https%3A%2F%2Fwww.reddit.com%2Fr%2FSatoshiStreetBets&filter=new",
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_ENCODING => "",
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 30,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => "GET",
-    CURLOPT_HTTPHEADER => [
-        "x-rapidapi-host: reddit3.p.rapidapi.com",
-        "x-rapidapi-key: x-rapidapi-key"
-    ],
-]);
 
-$response = curl_exec($curl);
-$err = curl_error($curl);
+function getPosts(string $subreddit) {
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => "https://reddit3.p.rapidapi.com/subreddit?url=https%3A%2F%2Fwww.reddit.com%2Fr%2F".$subreddit."&filter=new",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => [
+            "x-rapidapi-host: reddit3.p.rapidapi.com",
+            "x-rapidapi-key: x-rapidapi-key"
+        ],
+    ]);
 
-curl_close($curl);
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
 
-if ($err) {
-    echo "cURL Error #:" . $err;
-} else {
-    //echo $response;
+    curl_close($curl);
+
+    if ($err) {
+        echo "cURL Error #:" . $err;
+    } else {
+        //echo $response;
+    }
+
+    $posts = json_decode($response)->posts;
+    return $posts;
 }
-//var_dump(json_decode($response, true));
-$posts = json_decode($response)->posts;
-//var_dump($posts);
 
+
+//Create account on RapidAPI and subscribe to reddit API to test the following script
+$subreddits = ['SatoshiStreetBets','CryptoCurrency'];
+
+// TODO: Add a form of notification when table is updated (optional) telegram
+foreach ($subreddits as $subreddit){
+$posts = getPosts($subreddit);
+sleep(10);
 foreach($posts as $post){
     //echo gmdate("Y-m-d\TH:i:s\Z", $post->created);
 
@@ -59,4 +70,5 @@ foreach($posts as $post){
         $q = mysqli_query($conn, $query) or die (mysqli_error($conn));
     }
 
+}
 }
