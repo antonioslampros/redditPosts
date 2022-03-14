@@ -47,14 +47,14 @@ function getPosts(string $subreddit) {
     } else {
         //echo $response;
     }
-
-    return json_decode($response)->posts;
+    $posts = json_decode($response);
+    return $posts;
 }
 
 
 //Create account on RapidAPI and subscribe to reddit API to test the following script
 $subreddits = ['SatoshiStreetBets','CryptoCurrency'];
-
+$topics = [['Bitcoin','BTC'],['Cardano','ADA']];
 // TODO: Add a form of notification when table is updated (optional) telegram
 
 foreach ($subreddits as $subreddit){
@@ -67,8 +67,12 @@ foreach($posts as $post){
     $select = mysqli_query($conn, "SELECT * FROM posts WHERE title = '".filter_var($post->title, FILTER_SANITIZE_STRING)."'");
     if(mysqli_num_rows($select)) { //Upload only unique posts
     } else {
-        $query = "INSERT INTO posts (title, created, author_fullname, subreddit, upvote_ratio) VALUES ('". filter_var($post->title, FILTER_SANITIZE_STRING)."','". date("Y-m-d H:i:s", $post->created)."','". $post->author_fullname."','". $post->subreddit."','". $post->upvote_ratio."')";
+
+        $query = "INSERT INTO posts (title, created, author_fullname, subreddit, upvote_ratio,subject) VALUES ('". filter_var($post->title, FILTER_SANITIZE_STRING)."','". date("Y-m-d H:i:s", $post->created)."','". $post->author_fullname."','". $post->subreddit."','". $post->upvote_ratio."','no-subject')";
         $q = mysqli_query($conn, $query) or die (mysqli_error($conn));
+
+
+
     }
 
 }
