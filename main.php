@@ -48,8 +48,7 @@ function getPosts(string $subreddit) {
         //echo $response;
     }
 
-    $posts = json_decode($response)->posts;
-    return $posts;
+    return json_decode($response)->posts;
 }
 
 
@@ -57,9 +56,11 @@ function getPosts(string $subreddit) {
 $subreddits = ['SatoshiStreetBets','CryptoCurrency'];
 
 // TODO: Add a form of notification when table is updated (optional) telegram
+
 foreach ($subreddits as $subreddit){
 $posts = getPosts($subreddit);
 sleep(10);
+if (is_null($posts))
 foreach($posts as $post){
     //echo gmdate("Y-m-d\TH:i:s\Z", $post->created);
 
