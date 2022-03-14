@@ -8,7 +8,17 @@ $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+/*
+CREATE TABLE `posts` (
+  `title` varchar(256) NOT NULL,
+  `created` timestamp NOT NULL,
+  `author_fullname` varchar(50) NOT NULL,
+  `subreddit` varchar(50) NOT NULL,
+  `upvote_ratio` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+*/
 //Create account on RapidAPI and subscribe to reddit API to test the following script
 curl_setopt_array($curl, [
     CURLOPT_URL => "https://reddit3.p.rapidapi.com/subreddit?url=https%3A%2F%2Fwww.reddit.com%2Fr%2FSatoshiStreetBets&filter=new",
