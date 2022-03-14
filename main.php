@@ -47,33 +47,42 @@ function getPosts(string $subreddit) {
     } else {
         //echo $response;
     }
-    $posts = json_decode($response);
+    echo "success";
+    $posts = json_decode($response)->posts;
+    //var_dump($posts);
     return $posts;
 }
 
 
 //Create account on RapidAPI and subscribe to reddit API to test the following script
 $subreddits = ['SatoshiStreetBets','CryptoCurrency'];
-$topics = [['Bitcoin','BTC'],['Cardano','ADA']];
+
+// TODO: filter titles per subject
+$topics = [['Shiba Inu','SHIB'],['Bitcoin','BTC'],['Cardano','ADA']];
 // TODO: Add a form of notification when table is updated (optional) telegram
 
 foreach ($subreddits as $subreddit){
 $posts = getPosts($subreddit);
 sleep(10);
-if (is_null($posts))
+if (!is_null($posts)){
+
+
 foreach($posts as $post){
     //echo gmdate("Y-m-d\TH:i:s\Z", $post->created);
-
     $select = mysqli_query($conn, "SELECT * FROM posts WHERE title = '".filter_var($post->title, FILTER_SANITIZE_STRING)."'");
     if(mysqli_num_rows($select)) { //Upload only unique posts
+
     } else {
 
-        $query = "INSERT INTO posts (title, created, author_fullname, subreddit, upvote_ratio,subject) VALUES ('". filter_var($post->title, FILTER_SANITIZE_STRING)."','". date("Y-m-d H:i:s", $post->created)."','". $post->author_fullname."','". $post->subreddit."','". $post->upvote_ratio."','no-subject')";
-        $q = mysqli_query($conn, $query) or die (mysqli_error($conn));
+            $query = "INSERT INTO posts (title, subject, created, author_fullname, subreddit, upvote_ratio) VALUES ('". filter_var($post->title, FILTER_SANITIZE_STRING)."','no-subject','". date("Y-m-d H:i:s", $post->created)."','". $post->author_fullname."','". $post->subreddit."','". $post->upvote_ratio."')";
+            $q = mysqli_query($conn, $query) or die (mysqli_error($conn));
+
 
 
 
     }
 
 }
+}
+
 }
