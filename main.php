@@ -21,7 +21,7 @@ curl_setopt_array($curl, [
     CURLOPT_CUSTOMREQUEST => "GET",
     CURLOPT_HTTPHEADER => [
         "x-rapidapi-host: reddit3.p.rapidapi.com",
-        "x-rapidapi-key: 3a1107fda8msh9eddc2e29601754p195cdbjsnd63bbb28f823"
+        "x-rapidapi-key: x-rapidapi-key"
     ],
 ]);
 
